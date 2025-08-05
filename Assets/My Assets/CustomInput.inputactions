@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "CustomInput",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "3a5e4700-ace7-4cdd-b410-bb7955878408",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "b9622243-57c2-4eac-a4ac-05170caf4000",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3ec6ea61-7ff7-432b-b7b5-5fb19545cce1",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
