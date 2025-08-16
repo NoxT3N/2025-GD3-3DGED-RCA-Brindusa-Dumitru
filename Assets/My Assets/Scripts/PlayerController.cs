@@ -2,12 +2,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using System.Runtime.CompilerServices;
+using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     private CustomInput input;
     private NavMeshAgent agent;
     private Animator animator;
+
+    [Header("Point and Click Settings")]
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] ParticleSystem clickEffect;
 
     void Awake()
     {
@@ -34,6 +38,11 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 200f, groundLayer))
         {
             agent.SetDestination(hit.point);
+            if (clickEffect != null)
+            {
+                //Instantiate(clickEffect, hit.point += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
+                StartCoroutine(PlayClickEffect(hit.point + new Vector3(0, 0.1f, 0)));
+            }
         }
     }
 
@@ -52,6 +61,14 @@ public class PlayerController : MonoBehaviour
     {
         bool isMoving = agent.velocity.magnitude > 0.1f;
         animator.SetBool("IsMoving", isMoving);
+    }
+
+    IEnumerator PlayClickEffect(Vector3 position)
+    {
+        ParticleSystem effect = Instantiate(clickEffect, position, clickEffect.transform.rotation);
+        effect.Play();
+        yield return new WaitForSeconds(effect.main.duration);
+        Destroy(effect.gameObject);
     }
 
 }
