@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478f4642ee263024d9d614ddb47e4bb0, type: 3}
   m_Name: Wheat_CropData
   m_EditorClassIdentifier: 
-  cropName: Wheat
+  itemType: seeds
   description: A moderate amount of wait time for a moderate harvest. The perfect
     crop for those who prefer to play it safe
   icon: {fileID: 21300000, guid: 689b006d5d9d6bb4183cc25ec6307438, type: 3}
+  cropName: Wheat
   growthStages:
   - {fileID: 1135127989161193970, guid: 0e5008fbac6a282449996e45664d0bc1, type: 3}
   - {fileID: 5071359066403362785, guid: ede6fd949859290418dee18c0613681d, type: 3}
   - {fileID: 977348229829946154, guid: b4dade30dbc4e07489215c60461db48e, type: 3}
   growthTimePerStage: 10
   yieldAmount: 10
+  HarvestedItem: {fileID: 0}
+  marketValue: 0

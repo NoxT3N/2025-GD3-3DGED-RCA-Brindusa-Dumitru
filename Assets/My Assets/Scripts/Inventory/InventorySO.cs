@@ -14,12 +14,13 @@ public class InventorySO : ScriptableObject
         public bool IsFull(int maxStackSize) => quantity >= maxStackSize;
     }
 
+    public UnityEvent OnInventoryUpdated;
+    public UnityEvent<int> OnItemSelected;
+
     [Header("Configuration")]
     public int maxSlots = 10;
     public int maxStackSize = 20; //Maximum quantity per item in a slot
-    [Header("Events")]
-    public UnityEvent<ItemData> OnItemSelected = new();
-    public UnityEvent OnInventoryUpdated = new();
+    
     [Header("Debug View")]
     [SerializeField] private List<InventorySlot> slots = new();
     [SerializeField] private ItemData selectedItem;
@@ -37,7 +38,7 @@ public class InventorySO : ScriptableObject
         }
 
         InventorySlot existingSlot = slots.Find(slot => slot.item == item);
-        if (existingSlot != null || !existingSlot.IsFull(maxStackSize))
+        if (existingSlot != null && !existingSlot.IsFull(maxStackSize))
         {
             existingSlot.quantity += quantity;
         }
@@ -72,7 +73,7 @@ public class InventorySO : ScriptableObject
         if (slots.Exists(slot => slot.item == item))
         {
             selectedItem = item;
-            OnItemSelected.Invoke(item);
+            OnItemSelected.Invoke(slots.FindIndex(slot => slot.item == item));
         }
         else
         {

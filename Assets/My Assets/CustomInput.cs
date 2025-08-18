@@ -99,7 +99,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Dropdown"",
@@ -109,6 +109,15 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelectHotBar"",
+                    ""type"": ""Value"",
+                    ""id"": ""aa8174b8-2a98-47d4-9edf-07c2c1fd42ba"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -133,6 +142,17 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
                     ""action"": ""Dropdown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16bb3b1d-b23a-49ee-a777-d349c1a6be8a"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectHotBar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -143,6 +163,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Dropdown = m_Player.FindAction("Dropdown", throwIfNotFound: true);
+        m_Player_SelectHotBar = m_Player.FindAction("SelectHotBar", throwIfNotFound: true);
     }
 
     ~@CustomInput()
@@ -225,6 +246,7 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Dropdown;
+    private readonly InputAction m_Player_SelectHotBar;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -244,6 +266,10 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Dropdown".
         /// </summary>
         public InputAction @Dropdown => m_Wrapper.m_Player_Dropdown;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SelectHotBar".
+        /// </summary>
+        public InputAction @SelectHotBar => m_Wrapper.m_Player_SelectHotBar;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -276,6 +302,9 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
             @Dropdown.started += instance.OnDropdown;
             @Dropdown.performed += instance.OnDropdown;
             @Dropdown.canceled += instance.OnDropdown;
+            @SelectHotBar.started += instance.OnSelectHotBar;
+            @SelectHotBar.performed += instance.OnSelectHotBar;
+            @SelectHotBar.canceled += instance.OnSelectHotBar;
         }
 
         /// <summary>
@@ -293,6 +322,9 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
             @Dropdown.started -= instance.OnDropdown;
             @Dropdown.performed -= instance.OnDropdown;
             @Dropdown.canceled -= instance.OnDropdown;
+            @SelectHotBar.started -= instance.OnSelectHotBar;
+            @SelectHotBar.performed -= instance.OnSelectHotBar;
+            @SelectHotBar.canceled -= instance.OnSelectHotBar;
         }
 
         /// <summary>
@@ -347,5 +379,12 @@ public partial class @CustomInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDropdown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SelectHotBar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectHotBar(InputAction.CallbackContext context);
     }
 }

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e986d17287badc1448530f8ddc68afc7, type: 3}
-  m_Name: PlayerInventory
+  m_Name: PenguinInventory
   m_EditorClassIdentifier: 
-  OnInventoryUpdated:
-    m_PersistentCalls:
-      m_Calls: []
+  maxSlots: 10
+  maxStackSize: 20
   OnItemSelected:
     m_PersistentCalls:
       m_Calls: []
-  maxSlots: 8
-  maxStackSize: 20
+  OnInventoryUpdated:
+    m_PersistentCalls:
+      m_Calls: []
   slots: []
   selectedItem: {fileID: 0}
