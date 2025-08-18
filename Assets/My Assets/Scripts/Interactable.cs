@@ -3,9 +3,10 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public abstract class Interactable : MonoBehaviour, IInteractable, IPointerEnterHandler, IPointerExitHandler
+public abstract class Interactable : MonoBehaviour, IInteractable, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private Outline outline;
+    public float interactionRange = 3f;
 
     protected virtual void Awake()
     {
@@ -29,5 +30,18 @@ public abstract class Interactable : MonoBehaviour, IInteractable, IPointerEnter
     public void OnPointerExit(PointerEventData eventData)
     {
         outline.enabled = false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        PlayerController player = Object.FindFirstObjectByType<PlayerController>();
+        if (player != null)
+        {
+            Interact(player);
+        }
+        else
+        {
+            Debug.LogError("PlayerController not found in scene!");
+        }
     }
 }

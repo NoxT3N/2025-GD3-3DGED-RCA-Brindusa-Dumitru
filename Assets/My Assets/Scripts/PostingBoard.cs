@@ -1,21 +1,20 @@
 using UnityEngine;
 
-public class PostingBoard : MonoBehaviour, IInteractable
+public class PostingBoard : Interactable
 {
-    public string GetInteractionPrompt()
+    public override string GetInteractionPrompt()
     {
         throw new System.NotImplementedException();
     }
 
-    public void Interact(PlayerController player)
+    public override void Interact(PlayerController player)
     {
         throw new System.NotImplementedException();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        
+        base.Awake();
     }
 
     // Update is called once per frame

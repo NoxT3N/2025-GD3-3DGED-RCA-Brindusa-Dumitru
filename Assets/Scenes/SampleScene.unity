@@ -441,10 +441,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: posting board
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e3ca4db694fc2d242a9388cdd28cb3cf, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: e3ca4db694fc2d242a9388cdd28cb3cf, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e3ca4db694fc2d242a9388cdd28cb3cf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 959205555}
   m_SourcePrefab: {fileID: 100100000, guid: e3ca4db694fc2d242a9388cdd28cb3cf, type: 3}
 --- !u!1 &126882095
 GameObject:
@@ -1457,7 +1468,7 @@ GameObject:
   - component: {fileID: 579570644}
   - component: {fileID: 579570643}
   - component: {fileID: 579570642}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UICamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3212,6 +3223,24 @@ PrefabInstance:
       addedObject: {fileID: 1587049304}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9ff4dd34e32aa24991f670bf87d9aae, type: 3}
+--- !u!1 &959205553 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e3ca4db694fc2d242a9388cdd28cb3cf, type: 3}
+  m_PrefabInstance: {fileID: 116946449}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &959205555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959205553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7b73f03d3ff174e8ce6978c94eaa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 3
 --- !u!1 &989006044
 GameObject:
   m_ObjectHideFlags: 0
@@ -3979,6 +4008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b4017c328b17b449c2bb85074033da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactionRange: 3
 --- !u!1 &1344447521
 GameObject:
   m_ObjectHideFlags: 0
@@ -53269,6 +53299,18 @@ PrefabInstance:
     - target: {fileID: 592970789774592877, guid: 27886274f6ee5ae478702af711008699, type: 3}
       propertyPath: m_Name
       value: Penguin
+      objectReference: {fileID: 0}
+    - target: {fileID: 592970789774592877, guid: 27886274f6ee5ae478702af711008699, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1961062535712326985, guid: 27886274f6ee5ae478702af711008699, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6477472040765004499, guid: 27886274f6ee5ae478702af711008699, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class UISlotManager : MonoBehaviour
 {
-    [SerializeField] private PlayerController player;
+    public PlayerController player;
     [SerializeField] private Image[] slotIcons;
     [SerializeField] private TextMeshProUGUI[] slotQuantities;
     [SerializeField] private Color selectedColour;
@@ -20,17 +20,16 @@ public class UISlotManager : MonoBehaviour
 
 
     private void Start()
+{
+    playerInventory = player.GetComponent<PlayerInventoryHolder>().inventory;
+    if (playerInventory != null)
     {
-        playerInventory = player.GetComponent<PlayerInventoryHolder>().inventory;
-        if (playerInventory != null)
-        {
-            playerInventory.OnInventoryUpdated.AddListener(UpdateUI);
-            playerInventory.OnItemSelected.AddListener(UpdateUI);
-        }
-    
-        SelectSlot(0);
-        UpdateUI();
+        playerInventory.OnInventoryUpdated.AddListener(UpdateUI);
+        playerInventory.OnItemSelected.AddListener(UpdateSelectedSlot);
     }
+
+    playerInventory.SelectItemByIndex(0); //force first slot selected
+}
 
     private void OnDestroy()
     {
@@ -41,10 +40,21 @@ public class UISlotManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void UpdateSelectedSlot(int newIndex)
+{
+    //reset all to default colour
+    for (int i = 0; i < slotIcons.Length; i++)
     {
-       
+        slotIcons[i].color = defaultColour;
     }
+
+    //highlight only the selected
+    if (newIndex >= 0 && newIndex < slotIcons.Length)
+    {
+        slotIcons[newIndex].color = selectedColour;
+        selectedIndex = newIndex;
+    }
+}
 
     public void SelectSlot(int index)
     {
@@ -58,28 +68,24 @@ public class UISlotManager : MonoBehaviour
 
 
     public void UpdateUI()
+{
+    for (int i = 0; i < slotIcons.Length; i++)
     {
-        //update slot icons and quantities
-        for (int i = 0; i < playerInventory.SlotCount; i++)
+        var slot = playerInventory.Slots.ElementAtOrDefault(i);
+        if (slot != null && slot.item != null)
         {
-            if (i < slotIcons.Length)
-            {
-                var slot = playerInventory.Slots.ElementAtOrDefault(i);
-                if (slot != null && slot.item != null)
-                {
-                    slotIcons[i].sprite = slot.item.icon;
-                    slotIcons[i].enabled = true;
-                    slotQuantities[i].text = slot.quantity.ToString();
-                }
-                else
-                {
-                    slotIcons[i].sprite = null;
-                    slotIcons[i].enabled = false;
-                    slotQuantities[i].text = string.Empty;
-                }
-            }
+            slotIcons[i].sprite = slot.item.icon;
+            slotIcons[i].enabled = true;
+            slotQuantities[i].text = slot.quantity.ToString();
+        }
+        else
+        {
+            slotIcons[i].sprite = null;
+            slotIcons[i].enabled = false;
+            slotQuantities[i].text = string.Empty;
         }
     }
+}
     
     public void UpdateUI(int selectedIndex)
     {

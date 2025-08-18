@@ -1,128 +1,190 @@
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
+using System.Collections;
 
 public class GardenBed : Interactable
 {
     [System.Serializable]
     public class PlantingSpot
     {
-        public Transform spotTransform; //position of the crop
-        public CropData currentCrop; //the scriptable object representing the crop
-        public GameObject plantedObject; //the prefab representing the planted crop
-        public int currentStage = 0; //the current growth stage of the crop
-        public bool isReady => currentCrop && currentStage == currentCrop.growthStages.Length - 1; //checks if the crop is ready to be harvested
-        
+        public Transform spotTransform;
+        public CropData currentCrop;
+        public GameObject plantedObject;
+        public int currentStage = 0;
+        public bool isReady => currentCrop != null && currentStage == currentCrop.growthStages.Length - 1;
     }
-    private PlantingSpot[] plantingSpots = new PlantingSpot[4];
+
+    [Header("Debug Settings")]
+    [SerializeField] private bool debugMode = true;
+    [SerializeField] private float growthSpeedMultiplier = 1f; // Set to 10 for demo
+    
+    [Header("Planting Spots")]
+    [SerializeField] private PlantingSpot[] plantingSpots = new PlantingSpot[4];
 
     protected override void Awake()
     {
-        base.Awake(); //calling the base class Awake to ensure outline setup is done
+        base.Awake();
+        
+        if (debugMode) Debug.Log($"Initializing GardenBed: {name}");
 
-        //preparing the positions of the planting spots
-        Transform[] children = GetComponentsInChildren<Transform>();
-        // for (int i = 0; i < plantingSpots.Length; i++)
-        // {
-        //     plantingSpots[i] = new PlantingSpot();
-        //     if (i < children.Length)
-        //     {
-        //         plantingSpots[i].spotTransform = children[i];
-        //     }
-        // }
-        int i = 0;
-        foreach (Transform child in children)
+        // Initialize array if empty
+        if (plantingSpots == null || plantingSpots.Length == 0)
         {
-            if (child != transform)
+            plantingSpots = new PlantingSpot[4];
+            if (debugMode) Debug.Log("Reset planting spots array");
+        }
+
+        // Find planting spots
+        int foundSpots = 0;
+        foreach (Transform child in transform)
+        {
+            if (foundSpots >= plantingSpots.Length) break;
+            
+            if (child.name.StartsWith("crop_spawn"))
             {
-                if (child.name.StartsWith("crop_spawn"))
+                if (plantingSpots[foundSpots] == null)
                 {
-                    if (i<plantingSpots.Length)
-                    {
-                        plantingSpots[i] = new PlantingSpot { spotTransform = child };
-                        i++;
-                    }
+                    plantingSpots[foundSpots] = new PlantingSpot();
                 }
+                
+                plantingSpots[foundSpots].spotTransform = child;
+                foundSpots++;
+                
+                if (debugMode) Debug.Log($"Assigned spot {foundSpots} to {child.name}");
             }
         }
+        
+        if (debugMode) Debug.Log($"Found {foundSpots} planting spots");
     }
 
-
-    public void PlantCrop(CropData seeds)
+    public bool PlantCrop(CropData seeds)
     {
+        if (seeds == null)
+        {
+            if (debugMode) Debug.LogError("Tried to plant null seeds!");
+            return false;
+        }
+
         foreach (PlantingSpot spot in plantingSpots)
         {
-            if (spot.currentCrop == null) //first empty spot
+            if (spot.currentCrop == null)
             {
-                GameObject crop = Instantiate(seeds.growthStages[0], spot.spotTransform.position, Quaternion.identity, spot.spotTransform);
+                if (debugMode) Debug.Log($"Planting {seeds.name} at {spot.spotTransform.position}");
+                
                 spot.currentCrop = seeds;
-                spot.plantedObject = crop;
-
+                spot.plantedObject = Instantiate(
+                    seeds.growthStages[0], 
+                    spot.spotTransform.position, 
+                    Quaternion.identity, 
+                    spot.spotTransform
+                );
+                
                 StartCoroutine(GrowCrop(spot));
-                break; //exit after planting in the first available spot
+                return true;
             }
         }
+        
+        if (debugMode) Debug.Log("No empty planting spots available");
+        return false;
     }
 
-    public void HarvestCrop(PlayerController player)
+    public bool HarvestCrop(PlayerController player)
     {
+        PlayerInventoryHolder inventoryHolder = player.GetComponent<PlayerInventoryHolder>();
+        if (inventoryHolder == null || inventoryHolder.inventory == null)
+        {
+            if (debugMode) Debug.LogError("Player inventory missing!");
+            return false;
+        }
+
         foreach (PlantingSpot spot in plantingSpots)
         {
             if (spot.isReady)
             {
-                player.GetComponent<PlayerInventoryHolder>().inventory.AddItem(spot.currentCrop.HarvestedItem, spot.currentCrop.yieldAmount);
-                Destroy(spot.plantedObject); //remove the crop from the scene
-                spot.currentCrop = null; //reset the crop data
-                spot.currentStage = 0; //reset the growth stage
-                spot.plantedObject = null; //remove the planted object reference
-                Debug.Log($"Harvested from spot at {spot.spotTransform.position}");
-            }
-            else
-            {
-                Debug.Log("Crop is not ready for harvest yet.");
+                if (debugMode) Debug.Log($"Harvesting {spot.currentCrop.HarvestedItem.name} from {spot.spotTransform.position}");
+                
+                // Try to add to inventory
+                inventoryHolder.inventory.AddItem(spot.currentCrop.HarvestedItem, spot.currentCrop.yieldAmount);
+                
+                // Clear spot
+                Destroy(spot.plantedObject);
+                spot.currentCrop = null;
+                spot.plantedObject = null;
+                spot.currentStage = 0;
+                
+                return true;
             }
         }
+        
+        if (debugMode) Debug.Log("No crops ready to harvest");
+        return false;
     }
+
     private IEnumerator GrowCrop(PlantingSpot spot)
     {
-        for(int i = 1; i < spot.currentCrop.growthStages.Length; i++)
+        if (spot.currentCrop == null) yield break;
+        
+        int stages = spot.currentCrop.growthStages.Length;
+        
+        for (int i = 1; i < stages; i++)
         {
-            yield return new WaitForSeconds(spot.currentCrop.growthTimePerStage);
+            float stageTime = spot.currentCrop.growthTimePerStage / growthSpeedMultiplier;
+            
+            if (debugMode) Debug.Log($"Growing stage {i}/{stages} for {spot.currentCrop.name} (waiting {stageTime}s)");
+            
+            yield return new WaitForSeconds(stageTime);
+            
             if (spot.plantedObject != null)
             {
-                Destroy(spot.plantedObject); //remove the old crop
+                Destroy(spot.plantedObject);
             }
-            spot.plantedObject = Instantiate(spot.currentCrop.growthStages[i], spot.spotTransform.position, Quaternion.identity, spot.spotTransform);
-            spot.currentStage = i; //update the current stage
+
+            spot.plantedObject = Instantiate(
+                spot.currentCrop.growthStages[i], 
+                spot.spotTransform.position, 
+                Quaternion.identity, 
+                spot.spotTransform
+            );
+            
+            spot.currentStage = i;
         }
+        
+        if (debugMode) Debug.Log($"Crop fully grown: {spot.currentCrop.name}");
     }
     
     public override string GetInteractionPrompt()
     {
-        throw new System.NotImplementedException();
+        foreach (PlantingSpot spot in plantingSpots)
+        {
+            if (spot.isReady) return "[E] Harvest";
+            if (spot.currentCrop == null) return "[E] Plant";
+        }
+        return "[E] Garden Bed";
     }
 
     public override void Interact(PlayerController player)
     {
-        //Check if player has seeds to plant
-        InventorySO inventory = player.GetComponent<PlayerInventoryHolder>().inventory;
-        if (inventory.SelectedItem is CropData cropData)
+        if (debugMode) Debug.Log("Garden bed interacted");
+        
+        PlayerInventoryHolder inventoryHolder = player.GetComponent<PlayerInventoryHolder>();
+        if (inventoryHolder == null || inventoryHolder.inventory == null)
         {
-            PlantCrop(cropData);
-            Debug.Log($"Planted {cropData.cropName} in the garden bed.");
+            Debug.LogError("Player inventory missing!");
+            return;
         }
-        else
-        {
-            if (inventory.SlotCount != inventory.maxSlots)
-            {
-                HarvestCrop(player);
-            }
-            else
-            {
-                Debug.Log("Inventory is full, cannot harvest crops.");
-            }
 
+        InventorySO inventory = inventoryHolder.inventory;
+        
+        // Try planting if holding seeds
+        if (inventory.SelectedItem is CropData seeds)
+        {
+            if (PlantCrop(seeds))
+            {
+                inventory.RemoveItem(seeds, 1);
+            }
+        }
+        else // Try harvesting
+        {
+            HarvestCrop(player);
         }
     }
 }

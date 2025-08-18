@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e986d17287badc1448530f8ddc68afc7, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
+  debugMode: 1
   OnInventoryUpdated:
     m_PersistentCalls:
       m_Calls: []
@@ -20,5 +21,9 @@ MonoBehaviour:
       m_Calls: []
   maxSlots: 8
   maxStackSize: 20
-  slots: []
+  slots:
+  - item: {fileID: 0}
+    quantity: 0
+  - item: {fileID: 0}
+    quantity: 0
   selectedItem: {fileID: 0}

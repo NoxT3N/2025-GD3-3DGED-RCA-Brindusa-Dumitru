@@ -9,16 +9,18 @@ public class PenguinNPC : Interactable
 
     public override void Interact(PlayerController player)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("Penguin NPC interaction triggered.");
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+   public InventorySO Pinventory;
+  
+    void Awake()
     {
-        
+        base.Awake();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         
